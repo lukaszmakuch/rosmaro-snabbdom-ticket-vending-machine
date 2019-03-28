@@ -1,35 +1,112 @@
 {
+  "Zones": {
+    "type": "leaf"
+  },
+  "Tariffs": {
+    "type": "leaf"
+  },
+  "Thanks": {
+    "type": "leaf"
+  },
+  "MeansOfTransport": {
+    "type": "leaf"
+  },
+  "Order": {
+    "type": "leaf"
+  },
+  "Reset": {
+    "type": "leaf"
+  },
+  "Error": {
+    "type": "leaf"
+  },
   "main": {
     "type": "graph",
     "nodes": {
-      "On": "On",
-      "Off": "Off"
+      "Zones": "Zones",
+      "Tariffs#1": "Tariffs",
+      "Thanks": "Thanks",
+      "MeansOfTransport": "MeansOfTransport",
+      "Tariffs#2": "Tariffs",
+      "Order": "Order",
+      "Reset": "Reset",
+      "Error": "Error"
     },
     "arrows": {
-      "On": {
-        "clicked": {
-          "target": "Off",
+      "Thanks": {
+        "close": {
+          "target": "Reset",
           "entryPoint": "start"
         }
       },
-      "Off": {
-        "clicked": {
-          "target": "On",
+      "Zones": {
+        "all": {
+          "target": "Tariffs#1",
+          "entryPoint": "start"
+        },
+        "first": {
+          "target": "Tariffs#2",
+          "entryPoint": "start"
+        }
+      },
+      "MeansOfTransport": {
+        "selected": {
+          "target": "Order",
+          "entryPoint": "start"
+        }
+      },
+      "Tariffs#1": {
+        "regular": {
+          "target": "Order",
+          "entryPoint": "start"
+        },
+        "student": {
+          "target": "MeansOfTransport",
+          "entryPoint": "start"
+        }
+      },
+      "Tariffs#2": {
+        "regular": {
+          "target": "Order",
+          "entryPoint": "start"
+        },
+        "student": {
+          "target": "Order",
+          "entryPoint": "start"
+        }
+      },
+      "Order": {
+        "placed": {
+          "target": "Thanks",
+          "entryPoint": "start"
+        },
+        "error": {
+          "target": "Error",
+          "entryPoint": "start"
+        }
+      },
+      "Reset": {
+        "clear": {
+          "target": "Zones",
+          "entryPoint": "start"
+        }
+      },
+      "Error": {
+        "cancel": {
+          "target": "Reset",
+          "entryPoint": "start"
+        },
+        "try again": {
+          "target": "Order",
           "entryPoint": "start"
         }
       }
     },
     "entryPoints": {
       "start": {
-        "target": "On",
+        "target": "Reset",
         "entryPoint": "start"
       }
     }
-  },
-  "On": {
-    "type": "leaf"
-  },
-  "Off": {
-    "type": "leaf"
   }
 }
