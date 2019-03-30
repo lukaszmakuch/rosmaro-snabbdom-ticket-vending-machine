@@ -2,7 +2,6 @@
 
 Let’s get familiar with the requirements.
 
-
 There’s a screen to make a choice.
 
 There’s another screen to make a choice.
@@ -11,11 +10,12 @@ There’s a final step from where we can start the whole flow again.
 
 Depending on the first two choices, there may be an extra step.
 
+---
+
 # ENVIRONMENT
 
-Let’s start building!
 
-We’re gonna need:
+To start building, we are going to need:
 - a terminal
 - a browser
 - and a code editor
@@ -26,27 +26,40 @@ What we can find there is not only a complete documentation, but also many usefu
 
 We’re going to use the Rosmaro visual editor, which is a tool that allows to draw boxes with arrows that are turned into real, executable code.
 
-And in order to get up and running really quickly, our ticket machine wizard is going to be built on top of a snabbdom starter. It’s an example application where all the libraries are already configured and connected with each other.
+And in order to get up and running really quickly, our ticket machine wizard is going to be built on top of a snabbdom starter. It is an example application where all the libraries are already configured and connected with each other.
 
 Making use of the starter is simple.
-We just need to clone it, then instal the dependencies, and it’s ready to start .
+
+We just need to clone it, [...] then instal the dependencies, [...] and it’s ready to start .
 
 Now we may open the locally running project in the browser.
 
-In the code editor we can see all the new project source files.
+In the code editor we can see the source files of our new project.
 
 # THE FIRST SCREEN
 
 Before we jump into the editors, let’s take a look at the requirements one more time to clarify what does the home screen look like.
 
-# after reading it
-So there’s a screen to select zones and there are two options possible options.
+# reading - start
+The zones are selected in the first step.
+
+There are two possible choices: all zones or just the first one.
+
+Then, we ask the customer to choose a tariff: the regular one of the one for students.
+
+In most of he cases, the order is done. We show a screen with a “thank you” message that, when closed, allows to place a new order.
+
+However, if the customer ordered a student ticket valid in all zones, there’s an additional step asking about the means of transport they want to use: all of them or just the buses.
+
+# reading - end
+
+So there’s a screen to select zones and there are two possible options.
 
 Cool! Let’s write a test for that.
 
-We can remove the example test, because we don’t need it, and start writing a new one.
+We won't need the example test.
 
-It’s all about orders, so let’s call the test order.test.js.
+Our app is all about orders, so let’s call the test order.test.js.
 
 What’s described by this tests is a flow that starts with the zones screen.
 
@@ -54,9 +67,11 @@ It means that the first step is to see the zones.
 
 The flow function comes from the test/utils/runner file.
 
-The tests steps are going to live in their own files, grouped by screens. in the steps directory.
+The tests steps are going to live in their own files in the steps directory. 
 
-That’s why we’re importing zones from the zones from the test/steps/zones file.
+They will be grouped by the screens they interact with.
+
+That’s why we are importing zones from the test/steps/zones file.
 
 This file doesn’t exist yet, so let’s create it.
 
@@ -64,7 +79,7 @@ The first step, called “see”, is actually a collection of three other steps 
 
 The “assertVisible” function is imported from the test/steps/assert_visibility file.
 
-If we run the tests by typing nom t in the terminal, they fail, because this flow is not implemented yet.
+If we run the tests by typing npm t in the terminal, they fail, because this flow is not implemented yet.
 
 The implementation starts in the Rosmaro visual editor.
 
@@ -74,25 +89,29 @@ Then, we add the first node called “main” which is a graph. It’s going to 
 
 Next, we add a leaf called “Zones”. The code that handles the screen asking to select zones will be associated with this node.
 
-To tell Rosmaro that the application should start in the “Zones” node, we add a node in the “main” graph, […] connect the “start” entry point with it […] and finally we select the underlaying node of the “Zones” in “main” to be the “Zones” leaf.
+To tell Rosmaro that the application should start in the “Zones” node, we add a node in the “main” graph, […] connect the “start” entry point with it […] and finally we select the underlaying node of the “Zones” node in the “main” graph to be the “Zones” leaf.
 
 We can now generate the code by clicking the “GENERATE CODE” button.
 
-The generated code lands in the “graph.json” file.
+The output lands in the “graph.json” file.
 
 To make some space for the written part of the implementation, that is the code, we need to delete all the folders in the bindings/main directory.
 
-The main/index.js file may stay, because all it does is using the transparentHandler, what’s exactly what we need, that is a transparent node that doesn’t have its own behaviour. It means that when the current node of the state machine is the “Zones” node, the “main” node behaves exactly like the “Zones” node.
+The main/index.js file may stay, because all it does is using the transparentHandler, what’s exactly what we need, that is a transparent node that doesn’t have its own behaviour.
 
-To associate some behavior with the “Zones” node, which is a child of the “main” node, we create a “Zones” directory in the “main” directory. The binding, what’s a Rosmaro word for the behavior associated with a node, always lives in an index.js file.
+It means that when the current node of the state machine is the “Zones” node, the “main” node behaves exactly like the “Zones” node. It's simply transparent.
+
+To associate some behavior with the “Zones” node, which is a child of the “main” node, we create a “Zones” directory in the “main” directory. The binding, what is a Rosmaro word for the behavior associated with a node, always lives in an index.js file.
 
 The binding file exports a default function of an object that gives us the dispatch function, that is the function used to send actions to the Rosmaro model.
 
-The actual binding is an object that always exposes one property called “handler”.
+The actual binding is an object that always exposes one property called a “handler”.
 
 Under the hood, the handler is a function of action and context that returns some result, arrows to follow and an updated version of the context.
 
-Fortunately. thanks to the fact that the Rosmaro snabbdom starter uses the rosmaro-binding-utils package, we don’t need to do all it manually. We can make use of the makeHandler function.
+Fortunately. thanks to the fact that the Rosmaro snabbdom starter uses the rosmaro-binding-utils package, we don’t need to do all that manually.
+
+We can make use of the makeHandler function.
 
 By passing it an object with a RENDER key, we specify how do we want to handle actions where the “type” property equals “RENDER”.
 
@@ -101,21 +120,25 @@ In this case, we’re rendering a div with three children:
 - a “first” button
 - an “all” button”
 
-The h function is a helper function from the snabbdom virtual dom library used to create virtual dom nodes. It’s configured and exported in the src/utils/vdom file.
+The h function is a helper function from the snabbdom virtual dom library used to create virtual dom nodes.
+
+It’s configured and exported in the src/utils/vdom file.
 
 The makeHandler function is exported from the src/utils/handlers file.
 
 In order for the recently created Zones/index.js file to be correctly loaded and associated with the graph, we need to create a file mapping code to nodes. 
 
-With the Rosmaro command line utilities it’s really easy - all we need to do is to type nom run Rosmaro-bindings:generate in the terminal. 
+With the Rosmaro command line utilities it’s really easy - all we need to do is to type npm run Rosmaro-bindings:generate in the terminal. 
 
 As we can see, a file mapping code to nodes has been generated.
 
-Running npm t shows that the test we wrote passes.
+Running npm t shows that the test we wrote previously passes.
 
 If we go back to the browser, we will see that instead of the button from the example application we now see the first screen of the ticket vending machine.
 
-The only behavior currently associated with this node is reacting to the RENDER action. That’s why clicking the buttons has no effect.
+The only behavior currently associated with this node is reacting to the RENDER action.
+
+That’s why clicking the buttons has no effect.
 
 # GOING TO THE TARIFFS SCREEN
 
@@ -127,9 +150,9 @@ The customer needs to pick one of two tariffs: the regular one or the one for st
 
 Expressing this in the test case is simple.
 
-After the step that asserts that the zones screen is visible, we add steps to select the first zone and then see the tariffs screen.
+After the step that asserts that the zones screen is visible, we add steps to select the first zone and then another one to see the tariffs screen.
 
-All the steps regarding tariffs will come from the test/steps/tariffs file, similarly to zones steps coming from the test/steps/zones file.
+All the steps regarding tariffs will come from the test/steps/tariffs file, similarly to steps for the zones screen coming from the test/steps/zones file.
 
 Before we create any step for the new screen, let’s extend the zones steps with two new steps:
 - one to select all the zones
@@ -141,15 +164,19 @@ To select all zones, we click the button that contains the “all” word.
 
 And to select just the first zone, we click the button that contains the “first”  word.
 
-The steps/tariffs.js file will be very similar to the steps/zones.js file. Let’s use it as a template.
+The steps/tariffs.js file will be very similar to the steps/zones.js file. 
 
-When at the “Tariffs” step, the customer sees the tariffs word, the “regular” word and the “student” word”.
+Let’s use it as a template.
+
+When at the “Tariffs” screen, the customer must see the following words: tariffs, regular, and student.
 
 The implementation starts with a drawing.
 
-We will need another leaf for Tariffs. Let’s add it.
+We will need another leaf for Tariffs.
 
-Next, let’s add a node called “Tariffs” in the “main” graph. 
+Let’s add it.
+
+Next, let’s create a node called “Tariffs” in the “main” graph. 
 
 The fact that the user is supposed to land on the Tariffs screen after selecting the zones is expressed with an arrow going from the Zones box to the Tariffs box. 
 
@@ -163,25 +190,26 @@ Currently, the “Zones” node doesn’t follow any arrows.
 
 Let’s attach some behavior to the “first” button.
 
-The object which is passed as the second argument of the h function allows us to attach event handlers.
+The object which is passed as the second argument of the h function from snabbdom allows us to attach event handlers.
 
-When the button is clicked, we want it to call the “dispatch” function with an action that means that the user selected the first zone.
+When the button is clicked,
+we want it to call the “dispatch” function with an action that means that the user selected the first zone.
 
 This handler is then extended in such a way that it reacts to the FIRST action by following the “selected” arrow.
 
 The way following an arrow is implemented is very similar to the way rendering is implemented, just instead of returning a virtual dom node, it returns an object with an arrow property set to “selected”.
 
-Now, that the Zones screen knows when to follow the arrow, let’s code the tariffs screen.
+Now, that the Zones know when to follow the selected arrow, let’s write some  code for the tariffs.
 
-We will reuse what we have already written for the Zones screen.
+We will reuse what we already have for the Zones.
 
-Just instead of “Select zones”, “first” and “all” we put “select your tariff”, “regular” and “student”.
+Just need to put “select your tariff”, “regular” and “student” instead of “Select zones”, “first” and “all”.
 
-For now, we don’t need any event handlers. That’s why we’re commenting them out.
+For now, we don’t need any event handlers.That’s why we’re commenting them out.
 
-We have created new nodes and bindings.
+We have defined new nodes and handlers.
 
-That’s why it’s necessary to regenerate the bindings by running nom run Rosmaro-bindings:generate.
+That’s why it’s necessary to regenerate the automatically created bindings by running npm run Rosmaro-bindings:generate again.
 
 Now the tests pass.
 
@@ -191,14 +219,16 @@ Also, as we can see in the browser, it’s possible to go from the zones screen 
 
 To complete the first flow, we need to build a “thank you” message.
 
-There must be a way to close it, like a “close” button, that takes the user back to the “zones” screen.
+There must be a way to close it, like a “close” button, that takes the user back to “zones”.
 
 The list of steps may be extended in the following way:
 - after seeing the tariffs screen, we pick the regular tariff
-- then we see the thank you message
+- then, we see the thank you message
 - after closing the message, we see zones again
 
-The only new screen here is the thanks screen. We are going to put all steps related to this screen in a dedicated file, similarly to zones and tariffs.
+The only new screen here is the thanks screen.
+
+We are going to put all steps related to this screen in a dedicated file, similarly to how we did it for zones and tariffs.
 
 To express such a flow in the graph, we will need a new leaf - Thanks.
 
@@ -214,19 +244,21 @@ It means that when the user closes the “thank you” message, they land on the
 
 In order to be able to test what happens after a tariff is selected, we need to implement tests steps for that.
 
-So, to pick the regular tariff it means to click the “regular” button.
+So, to pick the regular tariff means to click the “regular” button.
 
 Similarly, the student tariff is selected by clicking the “student” button.
 
-The thanks screen is supposed to render a “thank you” message and a  “close” button.
+The thanks screen is supposed to render a “thank you” message and a “close” button.
 
 Closing this screen means clicking the “close” button. 
 
-It’s time to jump into the code.
+Good. It’s time to jump into the code.
 
-The tariffs screen is lacking event handlers. Now we already know that we want to follow the “selected” arrow when the “regular” button is clicked.
+The tariffs screen is lacking event handlers.
 
-The thanks screen simply displays a message and allows to click a button that follows the “close” arrow.
+Now we already know that we want to follow the “selected” arrow when the “regular” button is clicked.
+
+The "thank you" step simply displays a message and allows to click a button that follows the “close” arrow.
 
 Just to make sure we didn’t make any mistakes, let’s run the tests.
 
@@ -251,73 +283,77 @@ Let’s fix that.
 
 Clicking this button dispatches an action type ALL.
 
-Consuming this action follows the “selected” arrow”.
+Consuming this action follows the “selected” arrow.
 
-Now both of our tests pass.
+Now, both of our tests pass.
 
 We can try it out in the browser as well.
 
-Another similar flow we may want to test is a student ticket for the first zone.
+Another similar flow
+ we may want to test
+ is a student ticket for the first zone.
 
 As we can see, it doesn’t work neither.
 
 It’s because there’s no event handler to select the student tariff.
 
-We are going to fix it in a very similar way - by dispatching and then handling an action.
+We are going to fix it in a very similar way - by dispatching and then reacting to an action.
 
 That action makes the node follow the “selected” arrow. 
 
-Tests pass.
+Success! Tests are passing.
 
 And we can test it in the browser as well.
 
-It’s time to tackle the most challenging requirement.
+It’s time to handle the most challenging flow.
 
-As we can see in the requirements, depending on what did the customer select on the first two screens, there may be an extra screen before the thank you message.
+As we can see in the requirements, depending on what did the customer select on the first two screens, there may be an extra screen before we go to the thank you message.
 
 This kind of situation would normally be programmed with some sort of boolean value based logic, like an IF expression inspecting the data left by the previous screens.
 
-Modeling the business logic with boolean values may quickly turn into error prone hacking.
+But modeling the business logic with boolean values may quickly turn into error prone hacking with IFs.
 
 Fortunately, the automata-based programming paradigm gives us a lot cleaner, easy to understand solution.
 
-We’re simply going to draw different paths in the graph.
+We’re simply going to draw multiple paths in the graph.
 
-To draw paths dependent on decision made when in the “Zones” and “Tariffs” states, we need to make arrows they follow a bit more detailed.
+To draw paths dependent on decision made when in the “Zones” and “Tariffs” nodes, we need to make arrows they follow a bit more detailed.
 
-So, instead of the “Zones” node  following just one “selected” arrow, we want it to follow either the “first” arrow or the “all” arrow.
+So, instead of the “Zones” node  following just one “selected” arrow, we want it to follow either the “first” or the “all” arrow.
 
 This change needs to be reflected in the handler as well.
 
-When reacting to the FIRST action, it should follow the “first” arrow and when reacting to the “ALL” action, it should follow the “all” arrow.
+When reacting to the FIRST action, it should follow the “first” arrow.
+
+Similarly, when reacting to the “ALL” action, it should follow the “all” arrow.
 
 To make sure we didn’t break anything, we may want to run the tests.
 
 Everything looks fine, so let’s move to the “Tariffs” node.
 
-Here we also want a bit more information.
+Here we also want the arrows to give us a bit more information.
 
 That’s why we are going to follow either the student arrow or the regular arrow, and not just the “selected” arrow.
 
-Similarly as we’ve just done in the handler of the Zones node, here we also want to update the way how the node reacts to actions. 
+In the same way as we’ve just done in the handler of the Zones node, here we also want to update the way the node reacts to actions.
 
 And again, to make sure everything works after this refactoring, let’s run the tests.
 
 Alright, they are still green. :)
 
-We’re ready to test the first flow with an extra step.
+We’re ready to test the first flow with the extra step.
 
 It’s about:
 - selecting all zones
 - going to the tariffs screen
 - Selecting the student tariff 
-- going to the screen dedicated selecting means of transport
+- going to the screen dedicated for selecting means of transport
 - selecting all means of transport
 - seeing the thanks screen
 - closing the thanks screen
 - seeing the zones again
 
-The steps related to the means of transport screen will live in their own file.
+The steps related to means of transport will live in their own file.
 
 No surprises there.
 
@@ -327,15 +363,15 @@ The graph needs to be extended with a new node: MeansOfTransport.
 
 The first step is to add a leaf.
 
-Then, we need to add it to the “main” graph.
+Then, we add it to the “main” graph.
 
-This screen is supposed to be displayed between the Tariffs screen and the Thanks screen when it’s a student ticket.
+This screen is supposed to be displayed between Tariffs and Thanks when it’s a student ticket.
 
 Let’s place it there. 
 
-It means the “student” arrow doesn’t go directly to “Thanks”.
+It means that the “student” arrow doesn’t go directly to “Thanks”.
 
-It goes to “MeansOfTransport” instead.
+It goes to the “MeansOfTransport” node instead.
 
 Only then, when the means of transport are selected, it goes it “Thanks”.
 
@@ -343,9 +379,9 @@ The graph is not complete yet.
 
 The requirements clearly state that this extra step appears only when we’re buying a student ticket valid in all the zones.
 
-It is not supposed to be shown when the ticket is valid only in the first zone.
+It is not supposed to be displayed for a first zone only ticket.
 
-It means we need to introduce the second path in the graph a lot earlier, starting all the way from the “Zones” node, not just the “Tariffs” node.
+It means we need to introduce the second path in the graph a lot earlier, starting all the way from “Zones”, not just “Tariffs”.
 
 To do so, we are going to duplicate the “Tariffs” node.
 
@@ -359,7 +395,7 @@ From Tariffs#2 we go to “Thanks” both when the customer wants a regular tick
 
 Finally, we associate the Tariffs#2 node with the Tariffs leaf and the MeansOfTransport node with the MeansOfTransport leaf.
 
-The handler of the MeansOfTransport node is very similar to other handlers.
+The handler of MeansOfTransport is very similar to other handlers.
 
 There’s just no need to make different decisions depending on the selected means of transport, and that’s why we can simply follow a “selected” arrow.
 
@@ -367,7 +403,7 @@ The last thing to do is to fix the Tariffs nodes.
 
 Now there are two children of the “main” graph that are the Tariffs screen: Tariffs#1 and Tariffs#2. 
 
-That’s why we’re going to create symlinks to the Tariffs directory called Tariffs#1 and Tariffs#2, so that the Rosmaro command line utilities know how to generate bindings for them.
+That’s why we’re going to create two symlinks to the Tariffs directory called Tariffs#1 and Tariffs#2, so that the Rosmaro command line utilities know how to generate bindings for them.
 
 Speaking of bindings, it’s time to refresh them by running npm run rosmaro-bindings:generate.
 
@@ -378,9 +414,9 @@ We can see it in the browser:
 - then we state that we’re a student
 - and here it is - the screen to select means of transport.
 
-It works as expected and allows to finish the flow.
+It works as expected and allows to complete the flow.
 
-Just to extend the safety net of automated testing, let’s add a test for the case when we select just buses.
+To extend the safety net of automated testing, let’s add a test for the case when we select just buses.
 
 # PLACING THE ORDER
 
@@ -392,21 +428,21 @@ However, it doesn’t actually place the order.
 
 That’s going to change now.
 
-We are going to assert that the order is placed as soon as the user provides all the necessary answers.
+We are going to assert that the order is placed as soon as the user provides all the required answers.
 
 It will be another test step.
 
 For convenience, all the test steps related to orders will live in a dedicated file - test/steps/order.
 
-The `consumeEffects` function from the rosmaro-testing-library will help to make sure that the expected effect is returned.
+The `consumeEffects` function from the rosmaro-testing-library will help us to make sure that the expected effect is returned.
 
 It builds a test step that allows to examine (egg-za-min) all the effect objects returned by the previous steps. 
 
 It’s a good start to just cause an effect, even if it’s incomplete.
 
-That’s why for now we will just cause a generic “ORDER” effect.
+That’s why for now we will cause a very generic “ORDER” effect.
 
-We will add the order details later.
+We will populate it with details later.
 
 Because the order is supposed to be placed in various moments, like after the MeansOfTransport step or sometimes, but not always, after the Tariffs step, it deserves a dedicated node, so that we can clearly express it in the graph.
 
@@ -440,19 +476,19 @@ Associating code with the newly created node starts with a new file Order/index.
 
 What we need is a binding with a handler.
 
-So far it’s nothing new. We’ve already done things like.
+So far it’s nothing new. We’ve already done things like that.
 
 What’s new is how we are going to instruct Rosmaro to actually do something when this state is entered.
 
 We are not going to just render this state, like we did it in the other ones. 
 
-This one will trigger an action when it’s entered.
+This one will have an entry action.
 
 Thanks to the fact that the Rosmaro snabbdom starter makes use of the rosmaro-binding-utilities to support entry actions, we can simply handle the ON_ENTRY action like any other action.
 
 We want this node to immediately follow the “placed” arrow and cause an effect - place an order.
 
-The last thing left to do here for now is to import the makeHandler function from the src/utils/handlers file.
+The last thing to do here for now is to import the makeHandler function from the src/utils/handlers file.
 
 After regenerating the bindings by running npm run Rosmaro-bindings:generate we can run the tests to see that the order is placed.
 
@@ -468,13 +504,13 @@ Redux-Saga is what we are going to use to handle the ORDER effect.
 
 For the sake of the demonstration, we will simply console.log a message.
 
-So instead of the example PING-PONG saga, we want to react to all the ORDER effects.
+So instead of the example PING-PONG saga, we want to react to ORDER effects.
 
 They will all be consumed by a function named placeOrder.
 
 For now, the only job of this function will be to console.log a message.
 
- Let’s see how does it work in the browser.
+Let’s see how does it work in the browser.
 
 As soon as the order is placed, there’s a message in the console.
 
@@ -488,9 +524,9 @@ There’s no way it can be consumed in any useful way.
 
 Let’s make it more detailed.
 
-Instead of expecting just an order, we may be more precise and expect an order for a particular ticket.
+Instead of expecting just an order, we may be more precise and expect an order for a particular type of a ticket.
 
-The test steps needs to be updated.
+The test steps need to be updated.
 
 The exported constant is not anymore a test step itself.
 
@@ -508,7 +544,7 @@ For every new Rosmaro model, the context is undefined.
 
 To give it an initial value, we will extend the main/index.js binding.
 
-A binding is not limited just to a handler. It may also defined a lens.
+A binding is not limited to just a handler. It may also defined (di-fine) a lens.
 
 A lens is a way to adapt the context.
 
@@ -556,17 +592,17 @@ Unfortunately, there’s a bug.
 
 The order data, once filled in, is never cleared.
 
-That’s why after ordering a ticket with clearly specified means of transport, every other ticket will also have means of transport specified, even if they are not part of it.
+That’s why after ordering a ticket with clearly specified means of transport, every other ticket will also have means of transport specified, even if they should not be part of it.
 
 For example, here we first order a regular ticket for the first zone and see, that the data is correct. It contains exactly what it needs to contain and nothing more.
 
-Then, we also order a ticket that specified means of transport.
+Then, we also order a ticket that specifies means of transport.
 
-Finally, we run into the issue by ordering a regular ticket for the first zone. 
+Finally, we run into an issue by ordering a regular ticket for the first zone. 
 
-It contains one extra field - means of transport - that is not expected to be here.
+It contains one extra field we don't expect to be here - that is means of transport.
 
-Let’s write a test for such a scenario.
+Let’s write a test for such a scenario (sea-nah-ryo).
 
 The first part of the flow is all about placing an order that has three fields: zones, tariffs, and means of transport.
 
@@ -594,7 +630,7 @@ Also, to clear the memory after every order, instead of going from “Thanks” 
 
 The last step when it comes to the graph is to select the underlaying node - Reset.
 
-The binding of this node will look very similar to how the Order node looked like at the very beginning.
+The binding of this node will look very similar to what the Order node looked like at the very beginning.
 
 It will also define an entry action.
 
@@ -604,9 +640,9 @@ Here the context value is simply set to an empty object.
 
 All the tests are passing now.
 
-When running it in the browser, we can also see, that there are no more unexpected fields in the order.
+When running it in the browser, we can, that there are no more unexpected fields in the order.
 
-Because the context is cleared in an entry action, we don’t need this lens anymore.
+Because the context is now cleared in an entry action, we don’t need the initial value lens anymore.
 
 It may be safely removed.
 
@@ -618,15 +654,15 @@ As soon as the first version of the application is finished, we get some new req
 
 It turns out that the order may sometimes fail.
 
-We are expected to add error handling and a way to try again.
+We are expected to add error handling and a way to let the custom try to place the order again.
 
 So far all of our tests cover just the happy path - when the order is placed. 
 
-Now, that we are introducing errors, this fact should be reflected in the tests.
+Now, that we are introducing errors, this fact should be re-flected in the tests.
 
-First, test cases are renamed to reflect that they are all describing what happens when the order is placed successfully.
+First, test cases are renamed to re-flect that they are all describing what happens when the order is placed successfully.
 
-Then, we assume that there’s some sort of “please wait” message visible until we receive an order confirmation action.
+Then, we assume that there’s some sort of “please wait” message visible until we receive an order confirmation.
 
 This message is considered visible when the text “please wait” is on the screen.
 
@@ -638,9 +674,9 @@ Let’s change it and put there a message indicating the order is in progress.
 
 We want this node to follow the “placed” arrow when it gets a confirmation of a successfully placed order, that is an ORDER_SUCCESS action.
 
-Also, we don’t want it immediately anymore.
+Also, we don’t want it to immediately (ih-mee-dee-it-lee) follow an arrow anymore.
 
-The tests pass.
+Tests are passing.
 
 To see that in the browser, we need to update our fake saga.
 
@@ -656,11 +692,11 @@ The error flow will be quite similar to the happy path visible here.
 
 That’s why we can use it as a template.
 
-Instead of success there will be an error.
+Instead of a success there will be an error.
 
 Getting an error causes a transition to the error screen.
 
-From there, the order may be cancelled, what brings us back to the “zones” screen.
+From there, the order may be cancelled, what brings us back to "zones".
 
 Now, let’s apply the appropriate changes to the list of steps.
 
@@ -672,7 +708,7 @@ First, we see the error.
 
 Then, we close it.
 
-After that, we make sure the order is not placed.
+After that, we make sure that no order is placed.
 
 It confirms the fact that it’s been successfully cancelled.
 
@@ -690,13 +726,13 @@ The error screen is going to be very much like the thanks screen.
 
 It will just have a different message and a different button.
 
-But because we also want to see these things and be able to click the button, we can use the test steps for the thanks screen as a template to create test steps for the error screen.
+Because we also want to see and interact with these things, we can use the test steps for thanks as a template.
 
 Now, that the test cases are ready, it’s time to work on the graph.
 
 A new leaf will represent the Error screen.
 
-In the main graph, there will be a new path that goes to this error node if there’s an error on the order screen.
+In the main graph, there will be a new path that goes to this error node when there’s an error on the order screen.
 
 Then, when the user clicks the cancel button, we go to the very beginning of the flow, that is to the node that clears the order and starts everything from the very beginning.
 
@@ -706,23 +742,23 @@ The error action is not supported yet.
 
 Here we are going to make the order node follow the error arrow when it gets an error action.
 
-To build the error screen quickly, we will use the thanks screen as a base
+To build the error screen quickly, we will use the Thanks as a base
 
-We just need to change the message, the button and the followed arrow.
+We just need to change the message, the label of the button and the followed arrow.
 
 Nothing new so far.
 
-The steps that asserts that no order has been placed is a bit more interesting.
+The step that asserts that no order has been placed is a bit more interesting.
 
 It makes sure that since the last time we consumed the effects, there has been no new effect.
 
-To benefit from the new node we drew and the code we wrote, we need to regenerate the bindings.
+To benefit from the new node we just drew and the code we just wrote, we need to regenerate the bindings.
 
 The tests are passing.
 
-In order to be able to easily observe the error screen in the browser, let’s modify the fake saga.
+In order to be able to easily observe the error screen in the browser, let’s slightly modify the fake saga.
 
-It will randomly finish with either ORDER_SUCCESS or ORDER_ERROR action.
+It will randomly finish with either ORDER_SUCCESS or ORDER_ERROR.
 
 Let’s try to place an order a couple of times.
 
@@ -730,7 +766,7 @@ And here’s our error screen!
 
 We’re almost done.
 
-There’s just one more requirement we need to deliver.
+There’s just one more requirement we need to meet.
 
 There must be a way to try place the order again.
 
@@ -746,17 +782,17 @@ It’s going to start like the previous case - we place an order for a simple ti
 
 After getting an error, we try again.
 
-Then, we make sure the order is placed again.
+Then, we make sure that the order is placed again.
 
-Next, the model is fed with an order success message.
+Next, the model is fed with an order success action.
 
 After that, we see the thanks screen.
 
-And finally, we’re back to the zones screen.
+And finally, we’re back to the zones.
 
 This flow needs to be implemented in the graph.
 
-So instead of having just one arrow pointing from Order to Error, we also need an arrow that will let us go from the Error screen to the “Order” if the user wants to try again.
+So instead of having just one arrow pointing from Order to Error, we also need an arrow that will let the user go from the Error screen back to the “Order” screen.
 
 Finally, let’s add the try again button and make it follow the “try again” arrow.
 
@@ -764,19 +800,4 @@ To see it working, let’s try to land on the error screen.
 
 There’s a new button we may click.
 
-As we can see, we’ve just placed a new order by clicking it.
-
-
-
-Finished: 49:40
-
-
-# To mention:
-No real endpoint
-The code uses many Rosmaro utilities, like:
-- the Rosmaro binding utils to make it easier to write handlers
-- the Rosmaro command line tools to associate bindings with nodes based on the directory structure
-
-
-# todo
-Didn’t I make a mistake and called step objects step functions?
+And as we can see, we’ve just placed a new order.
