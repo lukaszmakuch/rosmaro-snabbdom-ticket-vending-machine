@@ -2,6 +2,18 @@
 
 Let’s get familiar with the requirements.
 
+The zones are selected in the first step.
+
+There are two possible choices: all zones or just the first one.
+
+Then, we ask the customer to choose a tariff: the regular one of the one for students.
+
+In most of he cases, the order is done. We show a screen with a “thank you” message that, when closed, allows to place a new order.
+
+However, if the customer ordered a student ticket valid in all zones, there’s an additional step asking about the means of transport they want to use: all of them or just the buses.
+
+So, to sum it up:
+
 There’s a screen to make a choice.
 
 There’s another screen to make a choice.
@@ -44,12 +56,6 @@ Before we jump into the editors, let’s take a look at the requirements one mor
 The zones are selected in the first step.
 
 There are two possible choices: all zones or just the first one.
-
-Then, we ask the customer to choose a tariff: the regular one of the one for students.
-
-In most of he cases, the order is done. We show a screen with a “thank you” message that, when closed, allows to place a new order.
-
-However, if the customer ordered a student ticket valid in all zones, there’s an additional step asking about the means of transport they want to use: all of them or just the buses.
 
 # reading - end
 
@@ -182,7 +188,7 @@ The fact that the user is supposed to land on the Tariffs screen after selecting
 
 The arrow is named after an event.
 
-In this case it’s “selected”, what means that a zone has been selected.
+In this case it’s “selected”, what means that zones have been selected.
 
 The last step before we can update the graph.json file is to specify that it’s the “Tariffs” leaf what’s under the Tariffs node in “main”. 
 
@@ -496,7 +502,7 @@ It means the Order node is entered, returns an effect and follows an arrow to th
 
 If we take a look at it in the browser, we  won’t see anything new. 
 
-It’s because this state newer renders and we’re not handling this effect in any way yet.
+It’s because this state newer renders and we’re not consuming this effect in any way yet.
 
 The Rosmaro Snabbdom starter we are using here combines many of the battle tested JavaScript libraries, like Redux for state management and Redux-Saga for side effects.
 
